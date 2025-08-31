@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add To Cart Details</title>
+    <style>
+        body{
+            width: 100vw;
+            height: 100vh;
+        }
+        table,td,th{
+            border: 1px solid gray;
+        }
+        td{
+            text-align: center;
+        }
+        table{
+            width: 100%;
+            height: 300px;
+            border-collapse: collapse;
+        }
+
+        table td .input_value{
+            width: 20px;
+            outline: none;
+            border: none;
+            font-size: large;
+        }
+        .sub{
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Add to cart - Product Details</h2>
+    <form action="{% url 'insertcart' %}" method="post">
+        {% csrf_token %}
+
+        <table id="cart_table">
+            <thead>
+                <tr>
+                    <th>Product name</th>
+                    <th>Quantity</th>
+                    <th>price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <input class="sub" type="submit" value="Check_out">
+    </form>
+
+
+
+
+
+<script>
+// collecting data...
+let cart = JSON.parse(localStorage.getItem('cart')); // Convert JSON string to array
+
+cart.forEach(function(a){
+    const table = document.getElementById('cart_table');
+    let row = 
+    `<tr>
+        <td>${a.name}</td>
+        <td>
+            <div class="prod_updt">
+                <button class="mbtn"> - </button>
+                <input class="input_value" type="text" value="${a.qty}" name="quantity">
+                <input type="hidden" value="${a.id}" name="id">
+                <button class="pbtn"> + </button>
+            </div>
+        </td>
+        <td class="price">${a.price}</td>
+        <td class="subtotal">${parseFloat( a.price * a.qty) }</td>
+    </tr>`
+    table.insertAdjacentHTML('beforeend', row);
+});
+
+
+//updation of button
+document.querySelectorAll(".prod_updt").forEach(function (card) {
+        const input = card.querySelector(".input_value");
+        const pro_div = card.closest('tr');
+        let price = pro_div.querySelector('.price').innerText;
+        let subtotal = pro_div.querySelector('.subtotal');
+
+        card.querySelector(".mbtn").addEventListener("click", function (e) {
+            e.preventDefault();
+            input.value = parseInt(input.value) - 1;
+            subtotal.innerText = parseFloat(input.value) * parseFloat(price);
+        });
+        
+        card.querySelector(".pbtn").addEventListener("click", function (e) {
+            e.preventDefault();
+            input.value = parseInt(input.value) + 1;
+            subtotal.innerText = parseFloat(input.value) * parseFloat(price);
+
+        });
+});
+</script>
+</body>
+</html>
